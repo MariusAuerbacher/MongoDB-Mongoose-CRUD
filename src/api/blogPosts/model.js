@@ -1,7 +1,6 @@
+import mongoose from "mongoose";
 
-import mongoose from "mongoose"
-
-const { Schema, model } = mongoose
+const { Schema, model } = mongoose;
 
 const blogPostsSchema = new Schema(
   {
@@ -10,23 +9,24 @@ const blogPostsSchema = new Schema(
     cover: { type: String, required: true },
     readTime: {
       value: { type: Number },
-      unit: { type: String},
+      unit: { type: String },
     },
-    author: {
-      name: { type: String },
-      avatar: { type: String},
-    },
+    author: [{
+      type: Schema.Types.ObjectId,
+      ref: "Author",
+      required: true
+     }],
     content: [String],
     comments: [
       {
-      text: { type: String, required: true},
-      author: { type: String, required: true}
-      }
-    ]
+        text: { type: String, required: true },
+        author: { type: String, required: true },
+      },
+    ],
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
-)
+);
 
-export default model("blogPost", blogPostsSchema) 
+export default model("blogPost", blogPostsSchema);

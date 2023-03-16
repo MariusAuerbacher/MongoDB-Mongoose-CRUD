@@ -1,11 +1,19 @@
 import express from "express";
 import createHttpError from "http-errors";
-import blogPostsModel from "./model.js";
+import AuthorsModel from "../authors/model.js";
+import blogPostsModel from "../blogPosts/model.js"
 
 const blogPostsRouter = express.Router();
 
 blogPostsRouter.post("/", async (req, res, next) => {
   try {
+    const { authorId, ...blogPostModel } = req.body;
+    const author = await AuthorsModel.findById(authorId);
+    if (!author) {
+      return next(
+        createHttpError(404, `Author with id ${authorId} not found!`)
+      );
+    }
     const newBlogPost = new blogPostsModel(req.body);
     const { _id } = await newBlogPost.save();
 
@@ -20,7 +28,8 @@ blogPostsRouter.get("/", async (req, res, next) => {
     const blogPost = await blogPostsModel
       .find()
       .skip(req.query.skip)
-      .limit(req.query.limit);
+      .limit(req.query.limit)
+      .populate("author");
     res.send(blogPost);
   } catch (error) {
     next(error);
@@ -151,7 +160,7 @@ blogPostsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
     );
 
     await blogPost.save();
-    res.send("Comment succesfully delete");
+    res.send("Comment successfully delete");
   } catch (error) {
     next(error);
   }
