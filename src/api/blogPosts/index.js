@@ -7,14 +7,14 @@ const blogPostsRouter = express.Router();
 
 blogPostsRouter.post("/", async (req, res, next) => {
   try {
-    const { authorId, ...blogPostModel } = req.body;
+    const { authorId, ...blogPostData } = req.body;
     const author = await AuthorsModel.findById(authorId);
     if (!author) {
       return next(
         createHttpError(404, `Author with id ${authorId} not found!`)
       );
     }
-    const newBlogPost = new blogPostsModel(req.body);
+    const newBlogPost = new blogPostsModel({ ...blogPostData, author: authorId });
     const { _id } = await newBlogPost.save();
 
     res.status(201).send({ _id });

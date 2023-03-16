@@ -4,7 +4,7 @@ const { Schema, model } = mongoose
 
 const authorsSchema = new Schema(
   {
-    author: { type: String, required: true },
+    name: { type: String, required: true },
   },
   { timestamps: true }
 )
